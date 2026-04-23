@@ -1,5 +1,5 @@
 function OrdersTable({ orders, onSelect, selectedIds, setSelectedIds }) {
-  if (orders.length === 0) return <p>No orders found</p>;
+  if (orders.length === 0) return <p className="p-4">No orders found</p>;
 
   const toggleSelect = (id) => {
     if (selectedIds.includes(id)) {
@@ -10,22 +10,25 @@ function OrdersTable({ orders, onSelect, selectedIds, setSelectedIds }) {
   };
 
   return (
-    <table border="1">
-      <thead>
+    <table className="w-full border border-slate-600 rounded-lg overflow-hidden">
+      <thead className="bg-slate-700">
         <tr>
-          <th>Select</th>
-          <th>Order ID</th>
-          <th>Customer</th>
-          <th>Status</th>
-          <th>Amount</th>
-          <th>Date</th>
+          <th className="p-3 border">Select</th>
+          <th className="p-3 border">Order ID</th>
+          <th className="p-3 border">Customer</th>
+          <th className="p-3 border">Status</th>
+          <th className="p-3 border">Amount</th>
+          <th className="p-3 border">Date</th>
         </tr>
       </thead>
 
       <tbody>
         {orders.map((o) => (
-          <tr key={o.orderId}>
-            <td>
+          <tr
+            key={o.orderId}
+            className="border-b border-slate-600 hover:bg-slate-700"
+          >
+            <td className="p-3 border">
               <input
                 type="checkbox"
                 checked={selectedIds.includes(o.orderId)}
@@ -33,11 +36,11 @@ function OrdersTable({ orders, onSelect, selectedIds, setSelectedIds }) {
               />
             </td>
 
-            <td onClick={() => onSelect(o)}>{o.orderId}</td>
-            <td onClick={() => onSelect(o)}>{o.customer}</td>
-            <td onClick={() => onSelect(o)}>{o.status}</td>
-            <td onClick={() => onSelect(o)}>{o.amount}</td>
-            <td onClick={() => onSelect(o)}>{o.date}</td>
+            <td className="p-3 border cursor-pointer" onClick={() => onSelect(o)}>{o.orderId}</td>
+            <td className="p-3 border cursor-pointer" onClick={() => onSelect(o)}>{o.customer}</td>
+            <td className="p-3 border cursor-pointer" onClick={() => onSelect(o)}>{o.status}</td>
+            <td className="p-3 border cursor-pointer" onClick={() => onSelect(o)}>{o.amount}</td>
+            <td className="p-3 border cursor-pointer" onClick={() => onSelect(o)}>{o.date}</td>
           </tr>
         ))}
       </tbody>

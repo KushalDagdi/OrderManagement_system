@@ -20,7 +20,6 @@ function App() {
 
   const limit = 5;
 
-  //  Fetch Orders
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -33,7 +32,7 @@ function App() {
       setOrders(data.data);
       setTotalPages(data.totalPages);
     } catch (err) {
-      console.error("Error fetching orders:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -41,10 +40,9 @@ function App() {
 
   useEffect(() => {
     fetchOrders();
-    setSelectedOrder(null); // reset detail on change
+    setSelectedOrder(null);
   }, [page, search, status, sort]);
 
-  //  Update single order status
   const updateStatus = (newStatus) => {
     setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
 
@@ -57,7 +55,6 @@ function App() {
     );
   };
 
-  //  Update note
   const updateNote = (note) => {
     setSelectedOrder((prev) => ({ ...prev, note }));
 
@@ -70,7 +67,6 @@ function App() {
     );
   };
 
-  //  Bulk status update
   const bulkUpdateStatus = (newStatus) => {
     if (!newStatus) return;
 
@@ -85,7 +81,6 @@ function App() {
     setSelectedIds([]);
   };
 
-  //  Export JSON
   const exportJSON = () => {
     const selectedOrders = orders.filter((o) =>
       selectedIds.includes(o.orderId)
@@ -102,7 +97,6 @@ function App() {
     a.click();
   };
 
-  //  Export CSV
   const exportCSV = () => {
     const selectedOrders = orders.filter((o) =>
       selectedIds.includes(o.orderId)
@@ -125,67 +119,93 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Orders Dashboard</h2>
+    <div className="min-h-screen bg-slate-900 text-white p-6">
+      <div className="max-w-6xl mx-auto">
 
-      {/*  Filters */}
-      <Filters
-        search={search}
-        setSearch={setSearch}
-        status={status}
-        setStatus={setStatus}
-        sort={sort}
-        setSort={setSort}
-        setPage={setPage}
-      />
+        {/* Header */}
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          Orders Dashboard
+        </h2>
 
-      <br />
+        {/* Filters */}
+        <div className="bg-slate-800 p-4 rounded-lg mb-4 shadow">
+          <Filters
+            search={search}
+            setSearch={setSearch}
+            status={status}
+            setStatus={setStatus}
+            sort={sort}
+            setSort={setSort}
+            setPage={setPage}
+          />
+        </div>
 
-      {/*  Bulk Actions */}
-      <div style={{ marginBottom: "10px" }}>
-        <select onChange={(e) => bulkUpdateStatus(e.target.value)}>
-          <option value="">Bulk Update Status</option>
-          <option value="Pending">Pending</option>
-          <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
+        {/* Bulk Actions */}
+        <div className="flex flex-wrap gap-3 mb-4">
+          <select
+            onChange={(e) => bulkUpdateStatus(e.target.value)}
+            className="bg-slate-800 border border-slate-600 px-3 py-2 rounded"
+          >
+            <option value="">Bulk Update Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
 
-        <button onClick={exportJSON} style={{ marginLeft: "10px" }}>
-          Export JSON
-        </button>
+          <button
+            onClick={exportJSON}
+            className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+          >
+            Export JSON
+          </button>
 
-        <button onClick={exportCSV} style={{ marginLeft: "10px" }}>
-          Export CSV
-        </button>
+          <button
+            onClick={exportCSV}
+            className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded"
+          >
+            Export CSV
+          </button>
+        </div>
+
+        {/* Table */}
+        <div className="bg-slate-800 rounded-lg shadow overflow-hidden">
+          {loading ? (
+            <p className="p-4 text-center">Loading...</p>
+          ) : (
+            <OrdersTable
+              orders={orders}
+              onSelect={setSelectedOrder}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+            />
+          )}
+        </div>
+
+        {/* Detail */}
+        {selectedOrder && (
+          <div className="mt-4 p-4">
+            <OrderDetail
+              order={selectedOrder}
+              onClose={() => setSelectedOrder(null)}
+              onStatusChange={updateStatus}
+              onNoteChange={updateNote}
+            />
+          </div>
+        )}
+
+        {/* Pagination */}
+        <div className="mt-4 p-4">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            setPage={setPage}
+          />
+        </div>
+
+        
+
       </div>
-
-      {/*  Table */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <OrdersTable
-          orders={orders}
-          onSelect={setSelectedOrder}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-        />
-      )}
-
-      {/*  Detail */}
-      {selectedOrder && (
-        <OrderDetail
-          order={selectedOrder}
-          onClose={() => setSelectedOrder(null)}
-          onStatusChange={updateStatus}
-          onNoteChange={updateNote}
-        />
-      )}
-
-      <br />
-
-      {/*  Pagination */}
-      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
     </div>
   );
 }
