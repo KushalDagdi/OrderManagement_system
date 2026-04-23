@@ -1,94 +1,71 @@
 const express = require("express");
 const cors = require("cors");
-const orders = require("./orders");
+const axios = require("axios");
 
 const app = express();
 app.use(cors());
 
+
+const CLIENT_ID = "Ov23liXdHdMlCjWQ59S5";
+const CLIENT_SECRET = "24106d741320440e0f66eb7cc711982aa445aab3";
+const REDIRECT_URI = "http://localhost:5000/auth/github/callback";
+
+
 app.get("/", (req, res) => {
-  res.send("API is running");
+  res.send("Server running");
 });
 
-app.get("/orders", (req, res) => {
-  const search = (req.query.search || "").trim().toLowerCase();
+app.get("/auth/github", (req, res) => {
+  const url =
+    `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}` +
+    `&redirect_uri=${REDIRECT_URI}` +
+    `&scope=read:user`;
 
-  let filtered = [...orders];
+  res.redirect(url);
+});
 
-  if (search) {
-    filtered = filtered.filter(order =>
-      order.orderId.toLowerCase().includes(search) ||
-      order.customer.toLowerCase().includes(search)
+
+app.get("/auth/github/callback", async (req, res) => {
+  const code = req.query.code;
+
+  try {
+    // get access token
+    const tokenRes = await axios.post(
+      "https://github.com/login/oauth/access_token",
+      {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code,
+      },
+      {
+        headers: { Accept: "application/json" },
+      }
     );
-  }
 
+    const access_token = tokenRes.data.access_token;
 
-  // filter code 
-  const status = req.query.status
-  if(status){
-    filtered = filtered.filter(order => order.status === status)
-  }
-
- // amount filter
-  const amount = req.query.amount;
-
-  if(amount) {
-        filtered = filtered.filter(order => order.amount >= Number(amount) );
-    }
-
-    const { from, to } = req.query;
-
-    if (from && to) {
-        filtered = filtered.filter(order => {
-            const orderDate = new Date(order.date);
-            return orderDate >= new Date(from) && orderDate <= new Date(to);
-        });
-    }
-
-    const sort = req.query.sort;
-
-    if (sort === "amount_desc") {
-        filtered.sort((a, b) => {
-            if (a.amount < b.amount) return 1;
-            else return -1;
-        });
-    }
-
-    if (sort === "date_desc") {
-        filtered.sort((a, b) => {
-            if (new Date(a.date) < new Date(b.date)) return 1;
-            else return -1;
-        });
-    }
-
-    //pagination
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-
-    const start = (page - 1) * limit;
-    const paginated = filtered.slice(start, start + limit);
-    
-  res.json({
-        total: filtered.length,
-        page: page,
-        totalPages: Math.ceil(filtered.length / limit),
-        data: paginated
+    // get user
+    const userRes = await axios.get("https://api.github.com/user", {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
     });
 
-    filtered = filtered.map(order => {
-      const subtotal = order.items.reduce(
-        (sum, item) => sum + item.price * item.qty,
-        0
-      );
+    const user = userRes.data;
 
-      const tax = subtotal * 0.18;
-      const total = subtotal + tax + order.shipping;
+    // redirect to frontend
+    res.redirect(
+      `http://localhost:5173/?user=${encodeURIComponent(
+        JSON.stringify(user)
+      )}`
+    );
 
-      return {
-       ...order,
-        amount: Math.round(total)
-      };
-    });
+  } catch (err) {
+    console.error(err);
+    res.send("OAuth Failed");
+  }
 });
+
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
