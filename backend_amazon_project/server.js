@@ -7,8 +7,8 @@ app.use(cors());
 
 
 const CLIENT_ID = "Ov23liXdHdMlCjWQ59S5";
-const CLIENT_SECRET = "24106d741320440e0f66eb7cc711982aa445aab3";
-const REDIRECT_URI = "http://localhost:5000/auth/github/callback";
+const CLIENT_SECRET = "";
+const REDIRECT_URI = "";
 
 
 app.get("/", (req, res) => {
