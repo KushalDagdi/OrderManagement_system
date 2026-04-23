@@ -1,5 +1,5 @@
 function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
-  // ✅ Safe calculation (handles missing items)
+  // Safe calculation 
   const subtotal = order.items?.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
@@ -21,12 +21,12 @@ function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
     >
       <h3>Order Details</h3>
 
-      {/* 🧾 Order Info */}
+      {/*  Order Info */}
       <p><b>Order ID:</b> {order.orderId}</p>
       <p><b>Customer:</b> {order.customer}</p>
       <p><b>Date:</b> {order.date}</p>
 
-      {/* 🔄 Status Update */}
+      {/*  Status Update */}
       <label><b>Status:</b> </label>
       <select
         value={order.status}
@@ -40,7 +40,7 @@ function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
 
       <hr />
 
-      {/* 🛒 Product List */}
+      {/*  Product List */}
       <h4>Products</h4>
       {order.items && order.items.length > 0 ? (
         <ul>
@@ -56,7 +56,7 @@ function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
 
       <hr />
 
-      {/* 💰 Price Breakdown */}
+      {/*  Price Breakdown */}
       <h4>Price Breakdown</h4>
       <p>Subtotal: ₹{subtotal}</p>
       <p>Tax (18%): ₹{tax}</p>
@@ -65,7 +65,7 @@ function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
 
       <hr />
 
-      {/* 📝 Internal Note */}
+      {/*  Internal Note */}
       <h4>Internal Note</h4>
       <textarea
         value={order.note || ""}
@@ -76,7 +76,7 @@ function OrderDetail({ order, onClose, onStatusChange, onNoteChange }) {
 
       <br /><br />
 
-      {/* ❌ Close Button */}
+      {/*  Close Button */}
       <button onClick={onClose}>Close</button>
     </div>
   );

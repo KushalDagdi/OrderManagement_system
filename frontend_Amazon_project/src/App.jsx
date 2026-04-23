@@ -20,7 +20,7 @@ function App() {
 
   const limit = 5;
 
-  // 🔌 Fetch Orders
+  //  Fetch Orders
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -44,7 +44,7 @@ function App() {
     setSelectedOrder(null); // reset detail on change
   }, [page, search, status, sort]);
 
-  // 🔄 Update single order status
+  //  Update single order status
   const updateStatus = (newStatus) => {
     setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
 
@@ -57,7 +57,7 @@ function App() {
     );
   };
 
-  // 📝 Update note
+  //  Update note
   const updateNote = (note) => {
     setSelectedOrder((prev) => ({ ...prev, note }));
 
@@ -70,7 +70,7 @@ function App() {
     );
   };
 
-  // 🔥 Bulk status update
+  //  Bulk status update
   const bulkUpdateStatus = (newStatus) => {
     if (!newStatus) return;
 
@@ -85,7 +85,7 @@ function App() {
     setSelectedIds([]);
   };
 
-  // 📤 Export JSON
+  //  Export JSON
   const exportJSON = () => {
     const selectedOrders = orders.filter((o) =>
       selectedIds.includes(o.orderId)
@@ -102,7 +102,7 @@ function App() {
     a.click();
   };
 
-  // 📤 Export CSV
+  //  Export CSV
   const exportCSV = () => {
     const selectedOrders = orders.filter((o) =>
       selectedIds.includes(o.orderId)
@@ -128,7 +128,7 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h2>Orders Dashboard</h2>
 
-      {/* 🔍 Filters */}
+      {/*  Filters */}
       <Filters
         search={search}
         setSearch={setSearch}
@@ -141,7 +141,7 @@ function App() {
 
       <br />
 
-      {/* 🔥 Bulk Actions */}
+      {/*  Bulk Actions */}
       <div style={{ marginBottom: "10px" }}>
         <select onChange={(e) => bulkUpdateStatus(e.target.value)}>
           <option value="">Bulk Update Status</option>
@@ -160,7 +160,7 @@ function App() {
         </button>
       </div>
 
-      {/* 📊 Table */}
+      {/*  Table */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -172,7 +172,7 @@ function App() {
         />
       )}
 
-      {/* 📄 Detail */}
+      {/*  Detail */}
       {selectedOrder && (
         <OrderDetail
           order={selectedOrder}
@@ -184,7 +184,7 @@ function App() {
 
       <br />
 
-      {/* 📄 Pagination */}
+      {/*  Pagination */}
       <Pagination page={page} totalPages={totalPages} setPage={setPage} />
     </div>
   );
