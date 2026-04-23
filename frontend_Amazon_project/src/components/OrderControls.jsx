@@ -5,7 +5,6 @@ function OrderControls({
   setStatus,
   sort,
   setSort,
-  selectedIds,
   bulkUpdate,
   exportCSV,
   exportJSON
@@ -13,19 +12,18 @@ function OrderControls({
   return (
     <div className="flex flex-wrap gap-3 mb-4">
 
-      {/*  SEARCH */}
+      {/* SEARCH */}
       <input
-        placeholder="Search Order ID / Customer"
+        placeholder="Search by ID or Name"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="bg-slate-800 p-2"
+        className="bg-slate-800 border border-slate-600 px-3 py-2 rounded"
       />
 
-      {/*  STATUS FILTER */}
+      {/* FILTER */}
       <select
-        value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="bg-slate-800 p-2"
+        className="bg-slate-800 border border-slate-600 px-3 py-2 rounded"
       >
         <option value="">All Status</option>
         <option>Pending</option>
@@ -34,33 +32,41 @@ function OrderControls({
         <option>Cancelled</option>
       </select>
 
-      {/*  SORT */}
+      {/* SORT */}
       <select
-        value={sort}
         onChange={(e) => setSort(e.target.value)}
-        className="bg-slate-800 p-2"
+        className="bg-slate-800 border border-slate-600 px-3 py-2 rounded"
       >
         <option value="">Sort</option>
-        <option value="amount_desc">Amount High → Low</option>
-        <option value="date_desc">Latest First</option>
+        <option value="amount_desc">Amount ↓</option>
+        <option value="date_desc">Date ↓</option>
       </select>
 
-      {/*  BULK UPDATE */}
-      <button
-        onClick={() => bulkUpdate("Delivered")}
-        disabled={selectedIds.length === 0}
-        className="bg-blue-500 px-3"
+      {/* BULK STATUS */}
+      <select
+        onChange={(e) => bulkUpdate(e.target.value)}
+        className="bg-slate-800 border border-slate-600 px-3 py-2 rounded"
       >
-        Bulk Deliver
+        <option value="">Bulk Update</option>
+        <option>Pending</option>
+        <option>Shipped</option>
+        <option>Delivered</option>
+        <option>Cancelled</option>
+      </select>
+
+      {/* EXPORT */}
+      <button
+        onClick={exportCSV}
+        className="border border-green-500 px-3 py-2 rounded hover:bg-green-500"
+      >
+        CSV
       </button>
 
-      {/*  EXPORT */}
-      <button onClick={exportCSV} className="bg-green-500 px-3">
-        Export CSV
-      </button>
-
-      <button onClick={exportJSON} className="bg-purple-500 px-3">
-        Export JSON
+      <button
+        onClick={exportJSON}
+        className="border border-purple-500 px-3 py-2 rounded hover:bg-purple-500"
+      >
+        JSON
       </button>
 
     </div>

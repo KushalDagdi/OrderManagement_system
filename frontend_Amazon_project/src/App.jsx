@@ -6,7 +6,7 @@ import OrdersPage from "./pages/OrdersPage";
 function App() {
   const [user, setUser] = useState(null);
 
-  // 🔐 Handle OAuth redirect
+  //  Handle OAuth redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userData = params.get("user");

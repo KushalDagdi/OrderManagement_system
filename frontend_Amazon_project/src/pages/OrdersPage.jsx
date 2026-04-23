@@ -16,22 +16,24 @@ function OrdersPage() {
     setOrders(stored);
   }, []);
 
-  let filtered = [...orders];
+  /* 
+     SEARCH (FIXED)
+   */
+  let filtered = orders.filter((o) =>
+    o.orderId.toLowerCase().includes(search.toLowerCase()) ||
+    o.customer.toLowerCase().includes(search.toLowerCase())
+  );
 
-  //  SEARCH
-  if (search) {
-    filtered = filtered.filter(o =>
-      o.orderId.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-
-  //  FILTER
+  /* 
+      FILTER
+  */
   if (status) {
-    filtered = filtered.filter(o => o.status === status);
+    filtered = filtered.filter((o) => o.status === status);
   }
 
-  //  SORT
+  /*
+     SORT
+  */
   if (sort === "amount_desc") {
     filtered.sort((a, b) => b.amount - a.amount);
   }
@@ -40,13 +42,24 @@ function OrdersPage() {
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  //  PAGINATION
+  /*
+      PAGINATION (FIXED)
+   */
   const limit = 5;
-  const paginated = filtered.slice((page - 1) * limit, page * limit);
+  const totalPages = Math.ceil(filtered.length / limit);
 
-  //  BULK UPDATE
+  const paginated = filtered.slice(
+    (page - 1) * limit,
+    page * limit
+  );
+
+  /* 
+      BULK UPDATE (ALL OPTIONS)
+   */
   const bulkUpdate = (newStatus) => {
-    const updated = orders.map(o =>
+    if (!newStatus) return;
+
+    const updated = orders.map((o) =>
       selectedIds.includes(o.orderId)
         ? { ...o, status: newStatus }
         : o
@@ -57,10 +70,17 @@ function OrdersPage() {
     setSelectedIds([]);
   };
 
-  //  EXPORT CSV
+  /* 
+      EXPORT CSV (FIXED)
+  */
   const exportCSV = () => {
-    const rows = orders.map(o =>
-      `${o.orderId},${o.customer},${o.status},${o.amount},${o.date}`
+    const selected = orders.filter((o) =>
+      selectedIds.includes(o.orderId)
+    );
+
+    const rows = selected.map(
+      (o) =>
+        `${o.orderId},${o.customer},${o.status},${o.amount},${o.date}`
     );
 
     const blob = new Blob([rows.join("\n")]);
@@ -70,9 +90,15 @@ function OrdersPage() {
     a.click();
   };
 
-  //  EXPORT JSON
+  /* 
+      EXPORT JSON
+   */
   const exportJSON = () => {
-    const blob = new Blob([JSON.stringify(orders, null, 2)]);
+    const selected = orders.filter((o) =>
+      selectedIds.includes(o.orderId)
+    );
+
+    const blob = new Blob([JSON.stringify(selected, null, 2)]);
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "orders.json";
@@ -80,7 +106,7 @@ function OrdersPage() {
   };
 
   return (
-    <div>
+    <div className="p-4">
 
       <OrderControls
         search={search}
@@ -103,10 +129,9 @@ function OrdersPage() {
 
       <Pagination
         page={page}
-        totalPages={Math.ceil(filtered.length / limit)}
+        totalPages={totalPages}
         setPage={setPage}
       />
-
     </div>
   );
 }
